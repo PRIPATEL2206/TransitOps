@@ -27,7 +27,7 @@ class DriverRules:
             )
         if driver.status != DriverStatus.AVAILABLE:
             raise BusinessRuleViolation(
-                f"Driver '{driver.full_name}' is not available (status: {driver.status.value}).",
+                f"Driver '{driver.full_name}' is not available (status: {driver.status}).",
                 rule_code="DRIVER_NOT_AVAILABLE",
             )
 
@@ -61,7 +61,7 @@ class DriverRules:
     def validate_can_be_reinstated(driver: Driver) -> None:
         if driver.status != DriverStatus.SUSPENDED:
             raise BusinessRuleViolation(
-                f"Driver '{driver.full_name}' is not Suspended (status: {driver.status.value}). "
+                f"Driver '{driver.full_name}' is not Suspended (status: {driver.status}). "
                 "Only Suspended drivers can be reinstated.",
                 rule_code="DRIVER_NOT_SUSPENDED",
             )

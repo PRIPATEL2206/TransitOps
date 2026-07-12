@@ -2,7 +2,7 @@ import enum
 from decimal import Decimal
 from typing import List, Optional
 
-from sqlalchemy import Enum, Integer, Numeric, String, Text
+from sqlalchemy import Integer, Numeric, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import BaseModel
@@ -36,14 +36,14 @@ class Vehicle(BaseModel):
     color: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
     vin: Mapped[Optional[str]] = mapped_column(String(50), unique=True, nullable=True)
 
-    # Operational
-    fuel_type: Mapped[FuelType] = mapped_column(
-        Enum(FuelType, name="fuel_type_enum"), nullable=False, default=FuelType.DIESEL
+    # Operational — Using String instead of PostgreSQL Enum for SQLite compatibility
+    fuel_type: Mapped[str] = mapped_column(
+        String(20), nullable=False, default=FuelType.DIESEL.value
     )
-    status: Mapped[VehicleStatus] = mapped_column(
-        Enum(VehicleStatus, name="vehicle_status_enum"),
+    status: Mapped[str] = mapped_column(
+        String(20),
         nullable=False,
-        default=VehicleStatus.AVAILABLE,
+        default=VehicleStatus.AVAILABLE.value,
         index=True,
     )
     max_capacity_kg: Mapped[Decimal] = mapped_column(

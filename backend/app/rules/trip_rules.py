@@ -16,7 +16,7 @@ class TripRules:
     def validate_can_be_dispatched(trip: Trip) -> None:
         if trip.status != TripStatus.SCHEDULED:
             raise BusinessRuleViolation(
-                f"Trip '{trip.trip_number}' cannot be dispatched: current status is '{trip.status.value}'. "
+                f"Trip '{trip.trip_number}' cannot be dispatched: current status is '{trip.status}'. "
                 "Only Scheduled trips can be dispatched.",
                 rule_code="TRIP_NOT_SCHEDULED",
             )
@@ -46,7 +46,7 @@ class TripRules:
     def validate_can_be_completed(trip: Trip) -> None:
         if trip.status not in (TripStatus.DISPATCHED, TripStatus.IN_PROGRESS):
             raise BusinessRuleViolation(
-                f"Trip '{trip.trip_number}' cannot be completed: current status is '{trip.status.value}'. "
+                f"Trip '{trip.trip_number}' cannot be completed: current status is '{trip.status}'. "
                 "Only Dispatched or In Progress trips can be completed.",
                 rule_code="TRIP_NOT_ACTIVE",
             )
@@ -78,7 +78,7 @@ class TripRules:
         if trip.status != TripStatus.SCHEDULED:
             raise BusinessRuleViolation(
                 f"Trip '{trip.trip_number}' details can only be updated in Scheduled status "
-                f"(current: {trip.status.value}).",
+                f"(current: {trip.status}).",
                 rule_code="TRIP_UPDATE_NOT_SCHEDULED",
             )
 
@@ -87,6 +87,6 @@ class TripRules:
         if trip.status not in (TripStatus.SCHEDULED, TripStatus.CANCELLED):
             raise BusinessRuleViolation(
                 f"Trip '{trip.trip_number}' can only be deleted when Scheduled or Cancelled "
-                f"(current: {trip.status.value}).",
+                f"(current: {trip.status}).",
                 rule_code="TRIP_DELETE_NOT_ALLOWED",
             )

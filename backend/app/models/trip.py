@@ -4,11 +4,10 @@ from datetime import datetime
 from decimal import Decimal
 from typing import Optional
 
-from sqlalchemy import DateTime, Enum, ForeignKey, Numeric, String, Text
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import DateTime, ForeignKey, Numeric, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import BaseModel
+from app.models.base import BaseModel, GUID
 
 
 class TripStatus(str, enum.Enum):
@@ -22,12 +21,12 @@ class TripStatus(str, enum.Enum):
 class Trip(BaseModel):
     __tablename__ = "trips"
 
-    # Foreign keys
+    # Foreign keys — Using GUID for cross-DB compatibility
     vehicle_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("vehicles.id", ondelete="RESTRICT"), nullable=False, index=True
+        GUID(), ForeignKey("vehicles.id", ondelete="RESTRICT"), nullable=False, index=True
     )
     driver_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("drivers.id", ondelete="RESTRICT"), nullable=False, index=True
+        GUID(), ForeignKey("drivers.id", ondelete="RESTRICT"), nullable=False, index=True
     )
 
     # Trip details
@@ -40,11 +39,11 @@ class Trip(BaseModel):
     cargo_description: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
     cargo_weight_kg: Mapped[Optional[Decimal]] = mapped_column(Numeric(10, 2), nullable=True)
 
-    # Status and lifecycle
-    status: Mapped[TripStatus] = mapped_column(
-        Enum(TripStatus, name="trip_status_enum"),
+    # Status and lifecycle — Using String for SQLite compatibility
+    status: Mapped[str] = mapped_column(
+        String(20),
         nullable=False,
-        default=TripStatus.SCHEDULED,
+        default=TripStatus.SCHEDULED.value,
         index=True,
     )
 

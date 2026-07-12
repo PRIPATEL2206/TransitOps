@@ -2,7 +2,7 @@ import enum
 from datetime import date
 from typing import List, Optional
 
-from sqlalchemy import Date, Enum, Integer, String, Text
+from sqlalchemy import Date, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import BaseModel
@@ -34,20 +34,20 @@ class Driver(BaseModel):
     phone: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
     national_id: Mapped[Optional[str]] = mapped_column(String(50), unique=True, nullable=True)
 
-    # License information
+    # License information — Using String for SQLite compatibility
     license_number: Mapped[str] = mapped_column(String(50), unique=True, nullable=False, index=True)
-    license_class: Mapped[LicenseClass] = mapped_column(
-        Enum(LicenseClass, name="license_class_enum"),
+    license_class: Mapped[str] = mapped_column(
+        String(20),
         nullable=False,
-        default=LicenseClass.CLASS_B,
+        default=LicenseClass.CLASS_B.value,
     )
     license_expiry_date: Mapped[date] = mapped_column(Date, nullable=False)
 
-    # Operational status
-    status: Mapped[DriverStatus] = mapped_column(
-        Enum(DriverStatus, name="driver_status_enum"),
+    # Operational status — Using String for SQLite compatibility
+    status: Mapped[str] = mapped_column(
+        String(20),
         nullable=False,
-        default=DriverStatus.AVAILABLE,
+        default=DriverStatus.AVAILABLE.value,
         index=True,
     )
 

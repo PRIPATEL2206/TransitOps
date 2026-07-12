@@ -6,7 +6,7 @@ from pydantic import BaseModel, EmailStr, field_validator
 
 
 class LoginRequest(BaseModel):
-    username: str
+    username: str  # Accepts username OR email
     password: str
 
 

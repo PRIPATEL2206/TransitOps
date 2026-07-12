@@ -1,14 +1,12 @@
 import enum
-import uuid
 from datetime import datetime
 from decimal import Decimal
 from typing import Optional
 
-from sqlalchemy import DateTime, Enum, ForeignKey, Numeric, String, Text
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import DateTime, ForeignKey, Numeric, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import BaseModel
+from app.models.base import BaseModel, GUID
 
 
 class FuelType(str, enum.Enum):
@@ -22,11 +20,11 @@ class FuelLog(BaseModel):
     __tablename__ = "fuel_logs"
 
     # Foreign key
-    vehicle_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("vehicles.id", ondelete="RESTRICT"), nullable=False, index=True
+    vehicle_id: Mapped[str] = mapped_column(
+        GUID(), ForeignKey("vehicles.id", ondelete="RESTRICT"), nullable=False, index=True
     )
-    trip_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("trips.id", ondelete="SET NULL"), nullable=True
+    trip_id: Mapped[Optional[str]] = mapped_column(
+        GUID(), ForeignKey("trips.id", ondelete="SET NULL"), nullable=True
     )
 
     # Fuel details

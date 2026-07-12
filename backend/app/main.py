@@ -114,6 +114,19 @@ def create_application() -> FastAPI:
     # Include routers
     application.include_router(api_router, prefix=settings.API_V1_STR)
 
+    @application.on_event("startup")
+    async def on_startup():
+        """Initialize database tables on startup (for SQLite / local dev)."""
+        from app.core.database import init_db
+        await init_db()
+        logger.info("Application started", version=settings.VERSION, db=settings.EFFECTIVE_DATABASE_URL)
+
+    @application.on_event("shutdown")
+    async def on_shutdown():
+        """Dispose database engine on shutdown."""
+        from app.core.database import dispose_engine
+        await dispose_engine()
+
     @application.get("/health", tags=["health"])
     async def health_check():
         return {"status": "healthy", "version": settings.VERSION}

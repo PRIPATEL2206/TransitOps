@@ -27,6 +27,17 @@ async def login(
     return await auth_service.create_tokens(user)
 
 
+# Alias: /auth/token works the same as /auth/login (for frontend compatibility)
+@router.post("/token", response_model=TokenResponse, include_in_schema=False)
+async def login_token_alias(
+    login_data: LoginRequest,
+    db: AsyncSession = Depends(get_db),
+):
+    auth_service = AuthService(db)
+    user = await auth_service.authenticate(login_data.username, login_data.password)
+    return await auth_service.create_tokens(user)
+
+
 @router.post("/refresh", response_model=TokenResponse, summary="Refresh access token")
 async def refresh_token(
     refresh_data: TokenRefreshRequest,

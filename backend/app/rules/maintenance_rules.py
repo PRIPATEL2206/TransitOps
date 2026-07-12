@@ -42,6 +42,6 @@ class MaintenanceRules:
     def validate_can_be_deleted(log: MaintenanceLog) -> None:
         if log.status != MaintenanceStatus.OPEN:
             raise BusinessRuleViolation(
-                f"Only Open maintenance logs can be deleted (current status: {log.status.value}).",
+                f"Only Open maintenance logs can be deleted (current status: {log.status}).",
                 rule_code="MAINTENANCE_DELETE_NOT_OPEN",
             )

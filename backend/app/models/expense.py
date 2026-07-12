@@ -1,14 +1,12 @@
 import enum
-import uuid
 from datetime import datetime
 from decimal import Decimal
 from typing import Optional
 
-from sqlalchemy import DateTime, Enum, ForeignKey, Numeric, String, Text
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import DateTime, ForeignKey, Numeric, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import BaseModel
+from app.models.base import BaseModel, GUID
 
 
 class ExpenseCategory(str, enum.Enum):
@@ -35,19 +33,19 @@ class Expense(BaseModel):
     __tablename__ = "expenses"
 
     # Foreign keys
-    vehicle_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("vehicles.id", ondelete="SET NULL"), nullable=True, index=True
+    vehicle_id: Mapped[Optional[str]] = mapped_column(
+        GUID(), ForeignKey("vehicles.id", ondelete="SET NULL"), nullable=True, index=True
     )
-    driver_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("drivers.id", ondelete="SET NULL"), nullable=True
+    driver_id: Mapped[Optional[str]] = mapped_column(
+        GUID(), ForeignKey("drivers.id", ondelete="SET NULL"), nullable=True
     )
-    trip_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("trips.id", ondelete="SET NULL"), nullable=True
+    trip_id: Mapped[Optional[str]] = mapped_column(
+        GUID(), ForeignKey("trips.id", ondelete="SET NULL"), nullable=True
     )
 
     # Expense details
-    category: Mapped[ExpenseCategory] = mapped_column(
-        Enum(ExpenseCategory, name="expense_category_enum"),
+    category: Mapped[str] = mapped_column(
+        String(30),
         nullable=False,
         index=True,
     )
@@ -57,10 +55,10 @@ class Expense(BaseModel):
     receipt_reference: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
 
     # Status
-    status: Mapped[ExpenseStatus] = mapped_column(
-        Enum(ExpenseStatus, name="expense_status_enum"),
+    status: Mapped[str] = mapped_column(
+        String(30),
         nullable=False,
-        default=ExpenseStatus.PENDING,
+        default=ExpenseStatus.PENDING.value,
         index=True,
     )
 

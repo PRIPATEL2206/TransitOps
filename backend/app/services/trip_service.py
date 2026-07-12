@@ -109,12 +109,12 @@ class TripService:
         # Optimistic lock check
         if vehicle.status != VehicleStatus.AVAILABLE:
             raise BusinessRuleViolation(
-                f"Vehicle '{vehicle.registration_number}' is no longer available (status: {vehicle.status.value})",
+                f"Vehicle '{vehicle.registration_number}' is no longer available (status: {vehicle.status})",
                 rule_code="VEHICLE_NOT_AVAILABLE",
             )
         if driver.status != DriverStatus.AVAILABLE:
             raise BusinessRuleViolation(
-                f"Driver '{driver.full_name}' is no longer available (status: {driver.status.value})",
+                f"Driver '{driver.full_name}' is no longer available (status: {driver.status})",
                 rule_code="DRIVER_NOT_AVAILABLE",
             )
 

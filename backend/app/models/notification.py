@@ -1,13 +1,11 @@
 import enum
-import uuid
 from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import Boolean, DateTime, Enum, ForeignKey, String, Text
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import Boolean, DateTime, ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import BaseModel
+from app.models.base import BaseModel, GUID
 
 
 class NotificationType(str, enum.Enum):
@@ -31,23 +29,23 @@ class Notification(BaseModel):
     __tablename__ = "notifications"
 
     # Target user (optional - can be broadcast)
-    user_id: Mapped[Optional[uuid.UUID]] = mapped_column(
-        UUID(as_uuid=True),
+    user_id: Mapped[Optional[str]] = mapped_column(
+        GUID(),
         ForeignKey("users.id", ondelete="CASCADE"),
         nullable=True,
         index=True,
     )
 
     # Notification content
-    notification_type: Mapped[NotificationType] = mapped_column(
-        Enum(NotificationType, name="notification_type_enum"),
+    notification_type: Mapped[str] = mapped_column(
+        String(30),
         nullable=False,
         index=True,
     )
-    severity: Mapped[NotificationSeverity] = mapped_column(
-        Enum(NotificationSeverity, name="notification_severity_enum"),
+    severity: Mapped[str] = mapped_column(
+        String(30),
         nullable=False,
-        default=NotificationSeverity.INFO,
+        default=NotificationSeverity.INFO.value,
     )
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     message: Mapped[str] = mapped_column(Text, nullable=False)

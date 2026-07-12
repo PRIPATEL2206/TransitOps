@@ -2,18 +2,17 @@ import uuid
 from typing import List, Optional
 
 from sqlalchemy import Boolean, ForeignKey, String, Table, Column
-from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.models.base import BaseModel, Base
+from app.models.base import BaseModel, Base, GUID
 
 
 # Association table for User <-> Role many-to-many
 user_roles_table = Table(
     "user_roles",
     Base.metadata,
-    Column("user_id", UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), primary_key=True),
-    Column("role_id", UUID(as_uuid=True), ForeignKey("roles.id", ondelete="CASCADE"), primary_key=True),
+    Column("user_id", GUID(), ForeignKey("users.id", ondelete="CASCADE"), primary_key=True),
+    Column("role_id", GUID(), ForeignKey("roles.id", ondelete="CASCADE"), primary_key=True),
 )
 
 

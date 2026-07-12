@@ -25,7 +25,7 @@ class VehicleRules:
             )
         if vehicle.status != VehicleStatus.AVAILABLE:
             raise BusinessRuleViolation(
-                f"Vehicle '{vehicle.registration_number}' is not available (status: {vehicle.status.value}).",
+                f"Vehicle '{vehicle.registration_number}' is not available (status: {vehicle.status}).",
                 rule_code="VEHICLE_NOT_AVAILABLE",
             )
 
