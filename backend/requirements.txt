@@ -1,0 +1,40 @@
+# ============================================
+# TransitOps Backend — Local Development
+# Python 3.13 + SQLite + JFrog compatible
+# ============================================
+
+# FastAPI and ASGI
+fastapi
+uvicorn
+python-multipart
+
+# Database (SQLite async)
+sqlalchemy[asyncio]
+aiosqlite
+alembic
+
+# Authentication
+python-jose[cryptography]
+passlib[bcrypt]
+bcrypt
+
+# Settings & Validation (no version pin — let pip resolve for Python 3.13)
+pydantic>=2.10
+pydantic-settings>=2.1
+
+# HTTP client
+httpx
+
+# Date/time utilities
+python-dateutil
+
+# Logging
+structlog
+
+# Testing
+pytest
+pytest-asyncio
+pytest-cov
+
+# Export (CSV/Excel)
+openpyxl

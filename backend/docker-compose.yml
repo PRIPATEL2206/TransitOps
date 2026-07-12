@@ -1,0 +1,97 @@
+version: "3.9"
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: transitops_api
+    ports:
+      - "8000:8000"
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=transitops
+      - POSTGRES_PASSWORD=transitops_secret
+      - POSTGRES_DB=transitops
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - SECRET_KEY=change-me-in-production-use-a-secure-random-key
+      - DEBUG=true
+      - LOG_LEVEL=INFO
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./app:/app/app  # Mount for hot-reload in development
+    restart: unless-stopped
+    networks:
+      - transitops_net
+
+  db:
+    image: postgres:15-alpine
+    container_name: transitops_db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=transitops
+      - POSTGRES_PASSWORD=transitops_secret
+      - POSTGRES_DB=transitops
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U transitops -d transitops"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - transitops_net
+
+  redis:
+    image: redis:7-alpine
+    container_name: transitops_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+    networks:
+      - transitops_net
+
+  # Database migration runner (one-shot service)
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: transitops_migrate
+    command: >
+      sh -c "alembic upgrade head && python scripts/seed_data.py"
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=transitops
+      - POSTGRES_PASSWORD=transitops_secret
+      - POSTGRES_DB=transitops
+    depends_on:
+      db:
+        condition: service_healthy
+    profiles:
+      - migrate
+    networks:
+      - transitops_net
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  transitops_net:
+    driver: bridge
