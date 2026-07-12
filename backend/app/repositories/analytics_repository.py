@@ -22,14 +22,20 @@ class AnalyticsRepository:
             Vehicle.status
         )
         result = await self.session.execute(stmt)
-        return {row.status.value: row.count for row in result.all()}
+        return {
+            (row.status.value if hasattr(row.status, "value") else str(row.status)): row.count
+            for row in result.all()
+        }
 
     async def get_driver_counts_by_status(self) -> Dict[str, int]:
         stmt = select(Driver.status, func.count(Driver.id).label("count")).group_by(
             Driver.status
         )
         result = await self.session.execute(stmt)
-        return {row.status.value: row.count for row in result.all()}
+        return {
+            (row.status.value if hasattr(row.status, "value") else str(row.status)): row.count
+            for row in result.all()
+        }
 
     async def get_trip_counts_this_month(self) -> Dict[str, int]:
         now = datetime.now(timezone.utc)
@@ -40,7 +46,10 @@ class AnalyticsRepository:
             .group_by(Trip.status)
         )
         result = await self.session.execute(stmt)
-        return {row.status.value: row.count for row in result.all()}
+        return {
+            (row.status.value if hasattr(row.status, "value") else str(row.status)): row.count
+            for row in result.all()
+        }
 
     async def get_fuel_cost_this_month(self) -> Decimal:
         now = datetime.now(timezone.utc)

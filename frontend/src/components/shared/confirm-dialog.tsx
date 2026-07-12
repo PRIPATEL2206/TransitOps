@@ -16,7 +16,9 @@ interface ConfirmDialogProps {
   /** Controls visibility */
   open: boolean;
   /** Called when the dialog should close (cancel, backdrop click, Escape) */
-  onClose: () => void;
+  onClose?: () => void;
+  /** Alternative callback for open state changes */
+  onOpenChange?: (open: boolean) => void;
   /** Called when the user confirms */
   onConfirm: () => void;
   /** Dialog heading */
@@ -36,6 +38,7 @@ interface ConfirmDialogProps {
 export function ConfirmDialog({
   open,
   onClose,
+  onOpenChange,
   onConfirm,
   title,
   description,
@@ -44,8 +47,13 @@ export function ConfirmDialog({
   variant = "default",
   isLoading = false,
 }: ConfirmDialogProps) {
+  const handleClose = () => {
+    onClose?.();
+    onOpenChange?.(false);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
+    <Dialog open={open} onOpenChange={(v) => !v && handleClose()}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>

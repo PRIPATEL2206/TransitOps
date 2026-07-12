@@ -1,6 +1,6 @@
 from typing import List, Optional
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import field_validator
+from pydantic import field_validator, Field, AliasChoices
 import secrets
 
 
@@ -71,11 +71,14 @@ class Settings(BaseSettings):
         return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}/{self.REDIS_DB}"
 
     # CORS
-    ALLOWED_ORIGINS: List[str] = [
-        "http://localhost:3000",
-        "http://localhost:8069",
-        "http://localhost:8080",
-    ]
+    ALLOWED_ORIGINS: List[str] = Field(
+        default=[
+            "http://localhost:3000",
+            "http://localhost:8069",
+            "http://localhost:8080",
+        ],
+        validation_alias=AliasChoices("ALLOWED_ORIGINS", "CORS_ORIGINS"),
+    )
 
     @field_validator("ALLOWED_ORIGINS", mode="before")
     @classmethod

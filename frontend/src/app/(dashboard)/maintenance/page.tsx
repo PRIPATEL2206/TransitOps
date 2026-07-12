@@ -125,7 +125,7 @@ export default function MaintenancePage() {
   async function handleClose() {
     if (!closeTarget) return;
     try {
-      await closeMaintenance.mutateAsync(closeTarget.id);
+      await closeMaintenance.mutateAsync({ id: closeTarget.id });
       toast({ title: "Maintenance record closed" });
     } catch {
       toast({ title: "Failed to close record", variant: "destructive" });

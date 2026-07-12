@@ -30,15 +30,6 @@ def create_application() -> FastAPI:
         openapi_url=f"{settings.API_V1_STR}/openapi.json" if settings.DEBUG else None,
     )
 
-    # CORS Middleware
-    application.add_middleware(
-        CORSMiddleware,
-        allow_origins=settings.ALLOWED_ORIGINS,
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
-
     # GZip compression
     application.add_middleware(GZipMiddleware, minimum_size=1000)
 
@@ -50,6 +41,15 @@ def create_application() -> FastAPI:
         process_time = time.time() - start_time
         response.headers["X-Process-Time"] = str(process_time)
         return response
+
+    # CORS Middleware (must be added last to be the outermost middleware)
+    application.add_middleware(
+        CORSMiddleware,
+        allow_origins=settings.ALLOWED_ORIGINS,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
     # Global exception handlers
     @application.exception_handler(NotFoundError)

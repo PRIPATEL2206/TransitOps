@@ -44,9 +44,10 @@ interface DataTableProps<T> {
   /** Row data */
   data: T[];
   /** Key extractor for React reconciliation */
-  getRowKey: (row: T) => string | number;
+  getRowKey?: (row: T) => string | number;
   /** Whether data is loading */
   loading?: boolean;
+  isLoading?: boolean;
   /** Whether to show the search input */
   searchable?: boolean;
   /** Placeholder text for the search input */
@@ -76,8 +77,9 @@ function SortIcon({ direction }: { direction: SortDirection }) {
 export function DataTable<T>({
   columns,
   data,
-  getRowKey,
+  getRowKey = (row: any) => row?.id ?? row?.key ?? JSON.stringify(row),
   loading = false,
+  isLoading,
   searchable = false,
   searchPlaceholder = "Search...",
   totalCount,
@@ -193,7 +195,7 @@ export function DataTable<T>({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {loading ? (
+            { (isLoading ?? loading) ? (
               // Loading skeleton rows
               Array.from({ length: pageSize > 5 ? 5 : pageSize }).map((_, i) => (
                 <TableRow key={`skeleton-${i}`}>
